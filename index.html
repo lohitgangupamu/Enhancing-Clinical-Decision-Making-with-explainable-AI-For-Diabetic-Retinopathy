@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetic Retinopathy Classifier</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0e0e0; /* Dull gray background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Pushes content to start */
+            height: 100vh;
+        }
+
+        /* Main Container */
+        .container {
+            background-color: #ffffff; /* White background inside container */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            display: flex; /* Side-by-side content */
+            flex-direction: row; /* Ensures form and sidebar align horizontally */
+            overflow: hidden; /* Keeps content inside the container */
+        }
+
+        /* Form and Results Section */
+        .form-section {
+            flex: 2; /* Take up two-thirds of the container */
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fafafa;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Refresh Button */
+        #refreshButton {
+            margin-top: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #refreshButton:hover {
+            background-color: #c82333;
+        }
+
+        /* Results Section */
+        #result {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #result p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        img {
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sidebar Section */
+        .sidebar {
+            flex: 1; /* Take up one-third of the container */
+            background-color: #f7f7f7;
+            padding: 20px;
+            text-align: center;
+            border-left: 1px solid #ddd;
+        }
+
+        .sidebar img {
+            max-width: 100%; /* Scale the image */
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .sidebar p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .sidebar {
+            flex: 1.5; /* Make sidebar slightly wider */
+        }
+        .form-section {
+            flex: 2.5; /* Adjust form section proportionately */
+        }
+        .sidebar ul li {
+            margin-bottom: 20px; /* Increase spacing between items */
+            font-size: 16px; /* Larger font for easier reading */
+        }
+        .container {
+            margin: auto; /* Center the container vertically and horizontally */
+            padding: 20px; /* Add spacing inside the container */
+        }
+        .sidebar {
+            background-color: #e6e6e6; /* A subtle gray for distinction */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form and Result Section -->
+        <div class="form-section">
+            <h1>Diabetic Retinopathy Classifier</h1>
+            <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data">
+                <label for="image">Upload Retinal Image:</label>
+                <input type="file" name="image" id="image" required>
+                <button type="submit">Predict</button>
+            </form>
+            <button id="refreshButton" onclick="refreshPage()">Refresh</button>
+            <div id="result">
+                <!-- Results will be dynamically displayed here -->
+            </div>
+        </div>
+
+        <!-- Sidebar Section -->
+        <div class="sidebar">
+            <img src="https://www.researchgate.net/profile/S-M-Anzar/publication/350582421/figure/fig2/AS:11431281176127551@1690035604421/Retinal-fundus-image-with-diabetic-retinopathy-diabetic-macular-edema-DR-DME-lesions.png" alt="Diabetic Retinopathy Example">
+            <h2>Diabetic Retinopathy Risks</h2>
+            <p>Diabetic retinopathy is a complication of diabetes that affects the eyes. It can cause blindness if untreated.</p>
+            <p>Risk factors include high blood sugar levels, hypertension, and prolonged diabetes.</p>
+            <h2>Classes and Causes</h2>
+            <ul>
+                <li>
+                    <strong>Class 0 (No DR):</strong> No signs of diabetic retinopathy. 
+                </li>
+                <li>
+                    <strong>Class 1 (Mild DR):</strong> Minor blood vessel swelling caused by high blood sugar levels.
+                </li>
+                <li>
+                    <strong>Class 2 (Moderate DR):</strong> Blood vessels in the retina become blocked, impacting vision.
+                </li>
+                <li>
+                    <strong>Class 3 (Severe DR):</strong> Extensive blockage in retinal blood vessels, leading to new abnormal vessel growth.
+                </li>
+                <li>
+                    <strong>Class 4 (Proliferative DR):</strong> Advanced stage with fragile, abnormal blood vessels, causing potential vision loss.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(this); // Create FormData object
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json(); // Parse JSON response
+            if (data.error) {
+                alert(data.error); // Display error alert
+            } else {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <p>Predicted Class: ${data.class}</p>
+                    <p>Confidence: ${data.confidence.toFixed(2)}%</p>
+                    
+                    <img src="/static/${data.heatmap_url}" alt="Heatmap" style="width: 300px;">
+                    <img src="/static/${data.bounding_boxes_url}" alt="Bounding Boxes" style="width: 300px;">
+                `;
+            }
+
+            <p> 
+                <li> Diagnoisis </li>
+                <li> 
+        });
+
+        // Refresh function
+        function refreshPage() {
+            document.getElementById("uploadForm").reset(); // Clear the form
+            document.getElementById("result").innerHTML = ""; // Clear the results
+        }
+    </script>
+</body>
+</html>
